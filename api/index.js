@@ -12,12 +12,8 @@ const UPLOAD_LIFETIME = 15 * 60 * 1000;
 const MAX_AUDIO_SIZE = 30 * 1024 * 1024;
 const AUDIO_EXTENSIONS = new Set([".mp3", ".wav", ".ogg", ".oga", ".opus", ".m4a", ".m4b", ".aac", ".flac", ".aiff", ".aif", ".wma", ".alac", ".amr", ".3gp", ".3g2", ".mid", ".midi", ".caf", ".au", ".snd", ".ra", ".rm"]);
 
-const db = missing.length ? null : createClient({ url: process.env.TURSO_DATABASE_URL, authToken: process.env.TURSO_AUTH_TOKEN });
-const r2 = missing.length ? null : new S3Client({
-  region: "auto",
-  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: { accessKeyId: process.env.R2_ACCESS_KEY_ID, secretAccessKey: process.env.R2_SECRET_ACCESS_KEY }
-});
+let db = null;
+let r2 = null;
 let schemaPromise;
 
 function hash(value) { return crypto.createHash("sha256").update(value).digest("hex"); }
@@ -50,8 +46,17 @@ function validUploadedAt(value) {
 function serializeSong(song) {
   return { ...song, id: Number(song.id), uploader_id: Number(song.uploader_id), file_size: Number(song.file_size), total_listens: Number(song.total_listens), total_downloads: Number(song.total_downloads) };
 }
+function connectStorage() {
+  if (missing.length) throw new Error(`Missing deployment variables: ${missing.join(", ")}`);
+  if (!db) db = createClient({ url: process.env.TURSO_DATABASE_URL, authToken: process.env.TURSO_AUTH_TOKEN });
+  if (!r2) r2 = new S3Client({
+    region: "auto",
+    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    credentials: { accessKeyId: process.env.R2_ACCESS_KEY_ID, secretAccessKey: process.env.R2_SECRET_ACCESS_KEY }
+  });
+}
 async function initialize() {
-  if (!db) throw new Error(`Missing deployment variables: ${missing.join(", ")}`);
+  connectStorage();
   if (!schemaPromise) {
     schemaPromise = db.batch([
       "PRAGMA foreign_keys = ON",
