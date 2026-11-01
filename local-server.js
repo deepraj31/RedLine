@@ -1,3 +1,4 @@
+// Local-only development server. Vercel uses api/[...path].js instead.
 const crypto = require("crypto");
 const express = require("express");
 const multer = require("multer");
