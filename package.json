@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "check": "node --check server.js && node --check api/index.js"
+    "check": "node --check server.js && node --check api/index.js && node --check \"api/[...path].js\""
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.993.0",
