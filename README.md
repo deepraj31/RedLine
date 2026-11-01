@@ -35,7 +35,7 @@ Both are ignored by Git, so uploaded content and local account data are not comm
 
 ## Deploy to Vercel
 
-Vercel serves `public/` and the native catch-all function in `api/[...path].js`. It does not run `scripts/local.cjs`.
+Vercel serves `public/` and the hosted Express entry point in `app.js`. It does not run `scripts/local.cjs`.
 
 Set these Production environment variables in Vercel, without quotes:
 

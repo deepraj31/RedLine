@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node scripts/local.cjs",
     "dev": "node scripts/local.cjs",
-    "check": "node --check scripts/local.cjs && node --check api/index.js && node --check \"api/[...path].js\""
+    "check": "node --check scripts/local.cjs && node --check api/index.js && node --check app.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.993.0",
